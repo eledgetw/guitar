@@ -1724,7 +1724,7 @@
             const isM11 = s.includes('m11');
             const isM9 = s.includes('m9');
             const isM6 = s.includes('m6');
-            const isM7 = s.includes('m7') && !isM7b5;
+            const isM7 = (s === 'm7' || s.includes('min7')) && !isM7b5 && !isM9 && !isM11 && !isM13;
             const isMinor = (s === 'm' || s.startsWith('min')) && !isM6 && !isM7 && !isM7b5 && !isM9 && !isM11 && !isM13;
 
             const isMaj13 = s.includes('maj13');
@@ -1739,7 +1739,7 @@
             const is7flat9 = s.includes('7(b9)') || s.includes('7b9');
             const is7flat5 = s.includes('7(b5)') || s.includes('7b5');
             const is7sus4 = s.includes('7sus4');
-            const is7 = (s === '7' || s.includes('dom7')) && !is7sharp9 && !is7flat9 && !is7flat5 && !is7sus4 && !isM7 && !is9 && !is11 && !is13;
+            const is7 = (s === '7' || s.includes('dom7')) && !is7sharp9 && !is7flat9 && !is7flat5 && !is7sus4 && !isM7 && !isMaj7 && !is9 && !is11 && !is13;
 
             const is69 = s.includes('6/9') || s.includes('69');
             const is6 = (s === '6') && !isM6 && !is69;
@@ -1778,6 +1778,18 @@
             } else if (isM13) {
                 if (fretStr5 <= 13) voicings.push({ name: `第 ${fretStr5} 品把位 (含13音)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5, 4: fretStr5 + 1, 5: fretStr5 + 2 }), lowestFret: fretStr5 });
                 if (fretStr6 <= 13) voicings.push({ name: `第 ${fretStr6} 品爵士把位 (Em13型)`, notes: sanitizeVoicing({ 0: fretStr6, 2: fretStr6, 3: fretStr6, 4: fretStr6 + 2, 5: fretStr6 }), lowestFret: fretStr6 });
+            } else if (isM7) {
+                if (fretStr6 === 0) {
+                    voicings.push({ name: '開放把位 (Em7型)', notes: sanitizeVoicing({ 0: 0, 1: 2, 2: 0, 3: 0, 4: 0, 5: 0 }), lowestFret: 0 });
+                    voicings.push({ name: '開放雙指把位 (Em7四音)', notes: sanitizeVoicing({ 0: 0, 1: 2, 2: 2, 3: 0, 4: 3, 5: 0 }), lowestFret: 0 });
+                    voicings.push({ name: '第 7 品封閉 (Am7型)', notes: sanitizeVoicing({ 1: 7, 2: 9, 3: 7, 4: 8, 5: 7 }), lowestFret: 7 });
+                } else if (fretStr5 === 0) {
+                    voicings.push({ name: '開放把位 (Am7型)', notes: sanitizeVoicing({ 1: 0, 2: 2, 3: 0, 4: 1, 5: 0 }), lowestFret: 0 });
+                    voicings.push({ name: '第 5 品封閉 (Em7型)', notes: sanitizeVoicing({ 0: 5, 1: 7, 2: 5, 3: 5, 4: 5, 5: 5 }), lowestFret: 5 });
+                } else {
+                    if (fretStr5 <= 13) voicings.push({ name: `第 ${fretStr5} 品封閉 (Am7型)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5, 4: fretStr5 + 1, 5: fretStr5 }), lowestFret: fretStr5 });
+                    if (fretStr6 <= 13) voicings.push({ name: `第 ${fretStr6} 品封閉 (Em7型)`, notes: sanitizeVoicing({ 0: fretStr6, 1: fretStr6 + 2, 2: fretStr6, 3: fretStr6, 4: fretStr6, 5: fretStr6 }), lowestFret: fretStr6 });
+                }
             } else if (isMinor) {
                 if (fretStr5 <= 13) voicings.push({ name: fretStr5 === 0 ? '開放把位 (Am型)' : `第 ${fretStr5} 品把位 (Am型)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5 + 2, 4: fretStr5 + 1, 5: fretStr5 }), lowestFret: fretStr5 });
                 if (fretStr6 <= 13) voicings.push({ name: fretStr6 === 0 ? '開放把位 (Em型)' : `第 ${fretStr6} 品封閉 (Em型)`, notes: sanitizeVoicing({ 0: fretStr6, 1: fretStr6 + 2, 2: fretStr6 + 2, 3: fretStr6, 4: fretStr6, 5: fretStr6 }), lowestFret: fretStr6 });
