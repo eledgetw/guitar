@@ -1655,7 +1655,18 @@
                 </span>
             `).join('');
 
-            const uniquePitchClasses = [...new Set(notesDetails.map(n => n.pitchClass))].sort((a, b) => a - b);
+            let currentSymbol = isPreviewingRelated ? previewChordSymbol : anchorChordSymbol;
+            const parsed = parseChordSymbol(currentSymbol);
+            let rootPC = parsed ? parsed.rootPC : (anchorPrimaryMatch ? anchorPrimaryMatch.rootPC : null);
+
+            const uniquePitchClasses = [...new Set(notesDetails.map(n => n.pitchClass))].sort((a, b) => {
+                if (rootPC !== null) {
+                    const distA = (a - rootPC + 12) % 12;
+                    const distB = (b - rootPC + 12) % 12;
+                    return distA - distB;
+                }
+                return a - b;
+            });
             uniqueCountBadge.textContent = `${uniquePitchClasses.length} 個獨立音名`;
 
             uniqueDisplay.innerHTML = uniquePitchClasses.map(pc => `
@@ -1823,8 +1834,15 @@
                 if (fretStr5 <= 13) voicings.push({ name: fretStr5 === 0 ? '開放把位 (Amaj7型)' : `第 ${fretStr5} 品把位 (Amaj7型)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5 + 1, 4: fretStr5 + 2, 5: fretStr5 }), lowestFret: fretStr5 });
                 if (fretStr6 <= 13) voicings.push({ name: fretStr6 === 0 ? '開放把位 (Emaj7型)' : `第 ${fretStr6} 品封閉 (Emaj7型)`, notes: sanitizeVoicing({ 0: fretStr6, 1: fretStr6 + 2, 2: fretStr6 + 1, 3: fretStr6 + 1, 4: fretStr6, 5: fretStr6 }), lowestFret: fretStr6 });
             } else if (is7) {
-                if (fretStr5 <= 13) voicings.push({ name: fretStr5 === 0 ? '開放把位 (A7型)' : `第 ${fretStr5} 品把位 (A7型)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5, 4: fretStr5 + 2, 5: fretStr5 }), lowestFret: fretStr5 });
-                if (fretStr6 <= 13) voicings.push({ name: fretStr6 === 0 ? '開放把位 (E7型)' : `第 ${fretStr6} 品封閉 (E7型)`, notes: sanitizeVoicing({ 0: fretStr6, 1: fretStr6 + 2, 2: fretStr6 + 1, 3: fretStr6 + 1, 4: fretStr6, 5: fretStr6 }), lowestFret: fretStr6 });
+                if (fretStr6 === 3) {
+                    voicings.push({ name: '開放把位 (G7標準型)', notes: sanitizeVoicing({ 0: 3, 1: 2, 2: 0, 3: 0, 4: 0, 5: 1 }), lowestFret: 0 });
+                }
+                if (fretStr5 <= 13) {
+                    voicings.push({ name: fretStr5 === 0 ? '開放把位 (A7型)' : `第 ${fretStr5} 品把位 (A7型)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5, 4: fretStr5 + 2, 5: fretStr5 }), lowestFret: fretStr5 });
+                }
+                if (fretStr6 <= 13) {
+                    voicings.push({ name: fretStr6 === 0 ? '開放把位 (E7型)' : `第 ${fretStr6} 品封閉 (E7型)`, notes: sanitizeVoicing({ 0: fretStr6, 1: fretStr6 + 2, 2: fretStr6, 3: fretStr6 + 1, 4: fretStr6, 5: fretStr6 }), lowestFret: fretStr6 });
+                }
             } else if (is7sus4) {
                 if (fretStr5 <= 13) voicings.push({ name: fretStr5 === 0 ? '開放把位 (A7sus4型)' : `第 ${fretStr5} 品把位 (A7sus4型)`, notes: sanitizeVoicing({ 1: fretStr5, 2: fretStr5 + 2, 3: fretStr5, 4: fretStr5 + 3, 5: fretStr5 }), lowestFret: fretStr5 });
                 if (fretStr6 <= 13) voicings.push({ name: fretStr6 === 0 ? '開放把位 (E7sus4型)' : `第 ${fretStr6} 品封閉 (E7sus4型)`, notes: sanitizeVoicing({ 0: fretStr6, 1: fretStr6 + 2, 2: fretStr6 + 2, 3: fretStr6 + 2, 4: fretStr6, 5: fretStr6 }), lowestFret: fretStr6 });
