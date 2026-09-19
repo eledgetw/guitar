@@ -1225,6 +1225,64 @@
             recalculateAndLockAnchor();
         }
 
+        function getChordSpelling(chordSymbol, rootPC, activePCs) {
+            const letterBase = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+            const letterSemitones = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
+            const spellingMap = {};
+
+            if (rootPC === null || rootPC === undefined || !chordSymbol) {
+                activePCs.forEach(pc => { spellingMap[pc] = noteNames[pc]; });
+                return spellingMap;
+            }
+
+            let rootLetter = chordSymbol.charAt(0).toUpperCase();
+            let rootAccidental = '';
+            if (chordSymbol.length > 1 && (chordSymbol.charAt(1) === '#' || chordSymbol.charAt(1) === 'b')) {
+                rootAccidental = chordSymbol.charAt(1);
+            }
+            const rootName = rootLetter + rootAccidental;
+            spellingMap[rootPC] = rootName;
+
+            const letterIdx = letterBase.indexOf(rootLetter);
+            if (letterIdx === -1) {
+                activePCs.forEach(pc => { spellingMap[pc] = noteNames[pc]; });
+                return spellingMap;
+            }
+
+            const degreeStepMap = {
+                1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 4, 8: 4, 9: 5, 10: 6, 11: 6
+            };
+
+            const s = chordSymbol.toLowerCase();
+            if (s.includes('sus2')) degreeStepMap[2] = 1;
+            if (s.includes('sus4') || s.includes('11')) degreeStepMap[5] = 3;
+            if (s.includes('7(#9)')) degreeStepMap[3] = 1;
+
+            activePCs.forEach(pc => {
+                if (pc === rootPC) return;
+                const interval = (pc - rootPC + 12) % 12;
+                const step = degreeStepMap[interval];
+
+                if (step !== undefined) {
+                    const targetLetter = letterBase[(letterIdx + step) % 7];
+                    const naturalMidi = letterSemitones[targetLetter];
+                    let diff = (pc - naturalMidi + 12) % 12;
+                    if (diff > 6) diff -= 12;
+
+                    if (diff === 0) spellingMap[pc] = targetLetter;
+                    else if (diff === 1) spellingMap[pc] = targetLetter + '#';
+                    else if (diff === 2) spellingMap[pc] = targetLetter + '##';
+                    else if (diff === -1) spellingMap[pc] = targetLetter + 'b';
+                    else if (diff === -2) spellingMap[pc] = targetLetter + 'bb';
+                    else spellingMap[pc] = noteNames[pc];
+                } else {
+                    spellingMap[pc] = noteNames[pc];
+                }
+            });
+
+            return spellingMap;
+        }
+
         function updateFretboardVisuals() {
             const hitboxes = document.querySelectorAll('.hitbox');
             
@@ -1235,6 +1293,16 @@
             
             let rootPC = parsed ? parsed.rootPC : (anchorPrimaryMatch ? anchorPrimaryMatch.rootPC : null);
             
+            const activeStrings = Object.keys(selectedNotes).map(Number);
+            const activePCs = new Set();
+            activeStrings.forEach(str => {
+                const fret = selectedNotes[str];
+                const midi = stringBaseMidi[str] + fret;
+                activePCs.add(midi % 12);
+            });
+
+            const spellingMap = getChordSpelling(currentSymbol, rootPC, activePCs);
+
             const tensionPCs = new Set();
             if (isExt && rootPC !== null) {
                 const s = currentSymbol.toLowerCase();
@@ -1263,6 +1331,13 @@
                 box.classList.remove('selected', 'preview-selected', 'role-root', 'role-tone', 'role-tension');
 
                 if (selectedNotes[str] === fret) {
+                    const midi = stringBaseMidi[str] + fret;
+                    const pc = midi % 12;
+                    const noteName = spellingMap[pc] || noteNames[pc];
+
+                    const selDot = box.querySelector('.selected-dot');
+                    if (selDot) selDot.textContent = noteName;
+
                     // 加入基礎選取狀態
                     if (isPreviewingRelated) {
                         box.classList.add('preview-selected');
@@ -1272,9 +1347,6 @@
                     
                     // 根據音程角色掛上專屬顏色 Class
                     if (rootPC !== null) {
-                        const midi = stringBaseMidi[str] + fret;
-                        const pc = midi % 12;
-                        
                         if (pc === rootPC) {
                             box.classList.add('role-root');
                         } else if (tensionPCs.has(pc)) {
@@ -1359,6 +1431,7 @@
                 keyEl.className = 'piano-white-key';
                 keyEl.dataset.midi = wk.midi;
                 keyEl.dataset.pc = wk.pc;
+                keyEl.dataset.defaultName = wk.name;
                 keyEl.dataset.octave = wk.octave;
                 keyEl.dataset.offset = wk.semitoneOffset;
                 keyEl.dataset.note = wk.name;
@@ -1400,6 +1473,7 @@
                     keyEl.className = 'piano-black-key';
                     keyEl.dataset.midi = blackMidi;
                     keyEl.dataset.pc = blackPC;
+                    keyEl.dataset.defaultName = blackNoteName;
                     keyEl.dataset.octave = blackOctave;
                     keyEl.dataset.offset = blackSemitoneOffset;
                     keyEl.dataset.note = blackNoteName;
@@ -1437,64 +1511,6 @@
             });
             updateMiniPiano();
         };
-
-        function getChordSpelling(chordSymbol, rootPC, activePCs) {
-            const letterBase = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-            const letterSemitones = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-            const spellingMap = {};
-
-            if (rootPC === null || rootPC === undefined || !chordSymbol) {
-                activePCs.forEach(pc => { spellingMap[pc] = noteNames[pc]; });
-                return spellingMap;
-            }
-
-            let rootLetter = chordSymbol.charAt(0).toUpperCase();
-            let rootAccidental = '';
-            if (chordSymbol.length > 1 && (chordSymbol.charAt(1) === '#' || chordSymbol.charAt(1) === 'b')) {
-                rootAccidental = chordSymbol.charAt(1);
-            }
-            const rootName = rootLetter + rootAccidental;
-            spellingMap[rootPC] = rootName;
-
-            const letterIdx = letterBase.indexOf(rootLetter);
-            if (letterIdx === -1) {
-                activePCs.forEach(pc => { spellingMap[pc] = noteNames[pc]; });
-                return spellingMap;
-            }
-
-            const degreeStepMap = {
-                1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 4, 8: 4, 9: 5, 10: 6, 11: 6
-            };
-
-            const s = chordSymbol.toLowerCase();
-            if (s.includes('sus2')) degreeStepMap[2] = 1;
-            if (s.includes('sus4') || s.includes('11')) degreeStepMap[5] = 3;
-            if (s.includes('7(#9)')) degreeStepMap[3] = 1;
-
-            activePCs.forEach(pc => {
-                if (pc === rootPC) return;
-                const interval = (pc - rootPC + 12) % 12;
-                const step = degreeStepMap[interval];
-
-                if (step !== undefined) {
-                    const targetLetter = letterBase[(letterIdx + step) % 7];
-                    const naturalMidi = letterSemitones[targetLetter];
-                    let diff = (pc - naturalMidi + 12) % 12;
-                    if (diff > 6) diff -= 12;
-
-                    if (diff === 0) spellingMap[pc] = targetLetter;
-                    else if (diff === 1) spellingMap[pc] = targetLetter + '#';
-                    else if (diff === 2) spellingMap[pc] = targetLetter + '##';
-                    else if (diff === -1) spellingMap[pc] = targetLetter + 'b';
-                    else if (diff === -2) spellingMap[pc] = targetLetter + 'bb';
-                    else spellingMap[pc] = noteNames[pc];
-                } else {
-                    spellingMap[pc] = noteNames[pc];
-                }
-            });
-
-            return spellingMap;
-        }
 
         function updateMiniPiano() {
             let currentSymbol = isPreviewingRelated ? previewChordSymbol : anchorChordSymbol;
@@ -1561,6 +1577,8 @@
                 }
             }
 
+            const spellingMap = getChordSpelling(currentSymbol, rootPC, activePCs);
+
             // 計算鍵盤起始點到根音的半音位移
             const isThreeBlackGroup = (rootPC >= 5 && rootPC <= 11);
             const startPC = isThreeBlackGroup ? 5 : 0;
@@ -1617,6 +1635,14 @@
                     }
                 }
 
+                if (label) {
+                    if (shouldHighlight && spellingMap[pc]) {
+                        label.textContent = spellingMap[pc];
+                    } else {
+                        label.textContent = keyEl.dataset.defaultName || noteNames[pc];
+                    }
+                }
+
                 if (shouldHighlight) {
                     if (isRoot) {
                         dot.classList.add('active-root');
@@ -1656,7 +1682,6 @@
                         return distA - distB;
                     });
 
-                    const spellingMap = getChordSpelling(currentSymbol, rootPC, activePCs);
                     const pcNames = sortedPCs.map(pc => {
                         const noteDisp = spellingMap[pc] || noteNames[pc];
                         if (pc === rootPC) {
