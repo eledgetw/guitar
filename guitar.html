@@ -1316,26 +1316,25 @@
             currentRenderedOctaves = octaveCount;
             currentRenderedRootPC = rootPC;
 
-            // Adjust width for authentic slender piano proportions
             container.style.width = '100%';
+
+            // 確保黑鍵組完整性：
+            // 若根音在 F, F#, G, G#, A, A#, B 區域，起點對齊 F(5)，完整包含 F#-G#-A# 3個黑鍵組；其餘對齊 C(0)
+            const isThreeBlackGroup = (rootPC >= 5 && rootPC <= 11);
+            const startPC = isThreeBlackGroup ? 5 : 0; // 5 = F, 0 = C
+
+            // 若從 F 起跑，涵蓋到高音 G/A 至少需要 15~18 個半音，確保根音右側有足夠空間展開完整的原位和弦 (G-B-D-F)
+            const baseSpan = isThreeBlackGroup ? 14 : 12;
+            const totalSemitones = baseSpan + (octaveCount - 1) * 12;
+            const baseStartMidi = 48 + startPC;
+
             if (octaveCount === 1) {
-                container.style.maxWidth = '320px';
-            } else if (octaveCount === 2) {
-                container.style.maxWidth = '100%';
+                container.style.maxWidth = isThreeBlackGroup ? '350px' : '320px';
             } else {
                 container.style.maxWidth = '100%';
             }
 
-            // If root is a natural white key (C, D, E, F, G, A, B), keyboard starts directly on that white key!
-            // If root is an accidental black key (C#, D#, F#, G#, A#), start on the white key right below it so the root sits on the very first divider!
-            const isRootWhite = IS_WHITE_PC[rootPC];
-            const startPC = isRootWhite ? rootPC : (rootPC - 1 + 12) % 12;
-
-            // Total semitones span
-            const totalSemitones = octaveCount * 12;
-            const baseStartMidi = 48 + startPC; // Standard C3 octave range
-
-            // Collect white keys across the requested span
+            // 1. 產生白鍵 (包含 semitoneOffset)
             const whiteKeys = [];
             for (let s = 0; s <= totalSemitones; s++) {
                 const pc = (startPC + s) % 12;
@@ -1361,6 +1360,7 @@
                 keyEl.dataset.midi = wk.midi;
                 keyEl.dataset.pc = wk.pc;
                 keyEl.dataset.octave = wk.octave;
+                keyEl.dataset.offset = wk.semitoneOffset;
                 keyEl.dataset.note = wk.name;
                 keyEl.dataset.wIndex = wIdx;
 
@@ -1401,6 +1401,7 @@
                     keyEl.dataset.midi = blackMidi;
                     keyEl.dataset.pc = blackPC;
                     keyEl.dataset.octave = blackOctave;
+                    keyEl.dataset.offset = blackSemitoneOffset;
                     keyEl.dataset.note = blackNoteName;
 
                     keyEl.style.width = `${blackKeyWidth}%`;
@@ -1502,12 +1503,16 @@
                 }
             }
 
+            // 計算鍵盤起始點到根音的半音位移
+            const isThreeBlackGroup = (rootPC >= 5 && rootPC <= 11);
+            const startPC = isThreeBlackGroup ? 5 : 0;
+            const rootOffset = (rootPC - startPC + 12) % 12;
+
             // Update all keys
             const allKeys = document.querySelectorAll('.piano-white-key, .piano-black-key');
             allKeys.forEach(keyEl => {
                 const pc = parseInt(keyEl.dataset.pc, 10);
-                const oct = parseInt(keyEl.dataset.octave, 10);
-                const wIdx = keyEl.dataset.wIndex !== undefined ? parseInt(keyEl.dataset.wIndex, 10) : null;
+                const offset = parseInt(keyEl.dataset.offset !== undefined ? keyEl.dataset.offset : keyEl.dataset.octave * 12, 10);
                 const dot = keyEl.querySelector('.key-indicator-dot');
                 const label = keyEl.querySelector('.key-note-label');
                 if (!dot) return;
@@ -1520,31 +1525,35 @@
                 let isTension = false;
 
                 if (activePCs.has(pc)) {
-                    // Do not duplicate root on the closing right-edge white key
-                    const isClosingDuplicateKey = (pc === rootPC && oct > 0 && wIdx !== null);
+                    // 核心關鍵：只點亮大於等於根音位置的琴鍵，保證根音為發聲的最低音！
+                    const relativeOffset = offset - rootOffset;
 
-                    if (!isExt) {
-                        // Standard chords: strictly highlight within Octave 0
-                        if (oct === 0 && !isClosingDuplicateKey) {
-                            shouldHighlight = true;
-                            isRoot = (pc === rootPC);
-                        }
-                    } else {
-                        // Extended chords: 9/11/13 tensions mapped to upper octave
-                        if (tensionPCs.has(pc)) {
-                            if (targetOctaves > 1) {
-                                if (oct === 1) {
-                                    shouldHighlight = true;
-                                    isTension = true;
-                                }
-                            } else {
+                    if (relativeOffset >= 0) {
+                        if (!isExt) {
+                            // 一般和弦：在根音起的 12 個半音內完成 (原位：根音最左，七音必定落在右側)
+                            if (relativeOffset < 12) {
                                 shouldHighlight = true;
-                                isTension = true;
+                                isRoot = (relativeOffset === 0);
                             }
                         } else {
-                            if (oct === 0 && !isClosingDuplicateKey) {
-                                shouldHighlight = true;
-                                isRoot = (pc === rootPC);
+                            // 延伸和弦：9/11/13 音允許出現在較高八度
+                            if (tensionPCs.has(pc)) {
+                                if (targetOctaves > 1) {
+                                    if (relativeOffset >= 12 && relativeOffset < 24) {
+                                        shouldHighlight = true;
+                                        isTension = true;
+                                    }
+                                } else {
+                                    if (relativeOffset > 0 && relativeOffset <= 14) {
+                                        shouldHighlight = true;
+                                        isTension = true;
+                                    }
+                                }
+                            } else {
+                                if (relativeOffset < 12) {
+                                    shouldHighlight = true;
+                                    isRoot = (relativeOffset === 0);
+                                }
                             }
                         }
                     }
