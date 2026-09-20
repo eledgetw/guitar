@@ -811,8 +811,8 @@
     </div>
 
     <script>
-        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        const flatToSharp = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#', 'Fb': 'E', 'Cb': 'B' };
+        const noteNames = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+        const flatToSharp = { 'Db': 'C#', 'D#': 'Eb', 'Gb': 'F#', 'G#': 'Ab', 'A#': 'Bb', 'Fb': 'E', 'Cb': 'B' };
         
         // Tuning midi base for 6 strings (6th to 1st): E2(40), A2(45), D3(50), G3(55), B3(59), E4(64)
         const stringBaseMidi = [40, 45, 50, 55, 59, 64];
@@ -1272,214 +1272,367 @@
                 { name: '第 1 品精緻四音把位 (1-4品)', notes: { 1: 4, 2: 4, 3: 1, 4: 2 }, lowestFret: 1 },
                 { name: '第 9 品低音大橫按把位 (9-11品)', notes: { 0: 9, 1: 11, 2: 11, 3: 11 }, lowestFret: 9 }
             ],
+
+            "D": [
+                { name: '開放常用把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 2 }, lowestFret: 0 },
+                { name: '第 5 品標準全封閉 (A型)', notes: { 1: 5, 2: 7, 3: 7, 4: 7 }, lowestFret: 5 },
+                { name: '第 5 品通透把位 (含4弦空弦D)', notes: { 2: 0, 3: 7, 4: 7, 5: 5 }, lowestFret: 0 },
+                { name: '第 10 品標準全封閉 (E型)', notes: { 0: 10, 1: 12, 2: 12, 3: 11, 4: 10, 5: 10 }, lowestFret: 10 }
+            ],
+            "D5": [
+                { name: '開放三音強力把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3 }, lowestFret: 0 },
+                { name: '第 5 品強力五度 (5-7品)', notes: { 1: 5, 2: 7, 3: 7 }, lowestFret: 5 },
+                { name: '第 7 品高音雙音把位 (7-10品)', notes: { 2: 0, 3: 7, 5: 10 }, lowestFret: 0 },
+                { name: '第 10 品低音強力把位 (10-12品)', notes: { 0: 10, 1: 12, 2: 12 }, lowestFret: 10 }
+            ],
+            "D6": [
+                { name: '開放通透把位 (0-2品)', notes: { 2: 0, 3: 2, 4: 0, 5: 2 }, lowestFret: 0 },
+                { name: '開放四音把位 (0-4品)', notes: { 2: 0, 3: 4, 4: 3, 5: 2 }, lowestFret: 0 },
+                { name: '第 5 品封閉把位 (A6型)', notes: { 1: 5, 2: 7, 3: 7, 4: 7, 5: 7 }, lowestFret: 5 },
+                { name: '第 7 品高音小橫按把位 (0-7品)', notes: { 2: 0, 3: 7, 4: 7, 5: 7 }, lowestFret: 0 }
+            ],
+            "D6/9": [
+                { name: '開放高音延伸把位 (0-5品)', notes: { 2: 0, 3: 2, 4: 2, 5: 5 }, lowestFret: 0 },
+                { name: '第 4 品四音爵士把位 (4-5品)', notes: { 1: 5, 2: 4, 3: 4, 4: 5 }, lowestFret: 4 },
+                { name: '第 4 品封閉五音把位 (4-5品)', notes: { 1: 5, 2: 4, 3: 4, 4: 5, 5: 5 }, lowestFret: 4 },
+                { name: '第 7 品全橫按爵士把位 (7-10品)', notes: { 0: 10, 1: 7, 2: 7, 3: 9, 4: 7, 5: 7 }, lowestFret: 7 }
+            ],
+            "D7": [
+                { name: '開放標準把位 (0-2品)', notes: { 2: 0, 3: 2, 4: 1, 5: 2 }, lowestFret: 0 },
+                { name: '第 5 品四音放克把位 (0-7品)', notes: { 2: 0, 3: 5, 4: 7, 5: 5 }, lowestFret: 0 },
+                { name: '第 5 品標準封閉把位 (A7型)', notes: { 1: 5, 2: 7, 3: 5, 4: 7, 5: 5 }, lowestFret: 5 },
+                { name: '第 8 品高音域延伸把位 (0-11品)', notes: { 2: 0, 3: 11, 4: 10, 5: 8 }, lowestFret: 0 }
+            ],
+            "D7(#9)": [
+                { name: '第 4 品經典亨德里克斯把位 (Hendrix)', notes: { 1: 5, 2: 4, 3: 5, 4: 6 }, lowestFret: 4 },
+                { name: '第 9 品四音爵士把位 (9-10品)', notes: { 0: 10, 1: 9, 2: 10, 3: 10 }, lowestFret: 9 },
+                { name: '第 9 品全封閉把位 (9-13品)', notes: { 0: 10, 1: 12, 2: 10, 3: 11, 4: 10, 5: 13 }, lowestFret: 9 },
+                { name: '第 11 品高音域把位 (11-13品)', notes: { 2: 12, 3: 11, 4: 13, 5: 13 }, lowestFret: 11 }
+            ],
+            "D7(b5)": [
+                { name: '開放通透四音把位 (0-2品)', notes: { 2: 0, 3: 1, 4: 1, 5: 2 }, lowestFret: 0 },
+                { name: '第 5 品封閉把位 (5-8品)', notes: { 1: 5, 2: 6, 3: 5, 4: 7, 5: 8 }, lowestFret: 5 },
+                { name: '第 9 品爵士四音把位 (9-10品)', notes: { 0: 10, 1: 9, 2: 10, 4: 9 }, lowestFret: 9 },
+                { name: '第 10 品全封閉把位 (10-12品)', notes: { 0: 10, 1: 11, 2: 10, 3: 11, 5: 12 }, lowestFret: 10 }
+            ],
+            "D7(b9)": [
+                { name: '第 4 品都會四音把位 (4-5品)', notes: { 1: 5, 2: 4, 3: 5, 4: 4 }, lowestFret: 4 },
+                { name: '第 4 品封閉五音把位 (4-5品)', notes: { 1: 5, 2: 4, 3: 5, 4: 4, 5: 5 }, lowestFret: 4 },
+                { name: '第 10 品全封閉把位 (10-12品)', notes: { 0: 10, 1: 12, 2: 10, 3: 11, 4: 10, 5: 11 }, lowestFret: 10 },
+                { name: '第 11 品高音域三音把位 (11-13品)', notes: { 2: 12, 3: 11, 4: 13 }, lowestFret: 11 }
+            ],
+            "D7sus4": [
+                { name: '開放標準把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 1, 5: 3 }, lowestFret: 0 },
+                { name: '第 3 品精簡三音把位 (0-5品)', notes: { 2: 0, 3: 5, 4: 3 }, lowestFret: 0 },
+                { name: '第 5 品全橫按把位 (5-7品)', notes: { 0: 5, 1: 5, 2: 5, 3: 5, 4: 7, 5: 5 }, lowestFret: 5 },
+                { name: '第 5 品封閉把位 (A7sus4型)', notes: { 1: 5, 2: 7, 3: 5, 4: 8, 5: 5 }, lowestFret: 5 }
+            ],
+            "D9": [
+                { name: '第 4 品放克四音把位 (4-5品)', notes: { 1: 5, 2: 4, 3: 5, 4: 5 }, lowestFret: 4 },
+                { name: '第 5 品封閉把位 (5-7品)', notes: { 1: 5, 2: 7, 3: 5, 4: 5, 5: 5 }, lowestFret: 5 },
+                { name: '第 5 品通透雙空弦型 (0-7品)', notes: { 2: 0, 3: 5, 4: 7, 5: 0 }, lowestFret: 0 },
+                { name: '第 10 品全封閉把位 (10-12品)', notes: { 0: 10, 1: 12, 2: 10, 3: 11, 4: 10, 5: 12 }, lowestFret: 10 }
+            ],
+            "D11": [
+                { name: '開放通透四音把位 (0-1品)', notes: { 2: 0, 3: 0, 4: 1, 5: 0 }, lowestFret: 0 },
+                { name: '第 3 品封閉四音把位 (3-5品)', notes: { 1: 5, 2: 4, 3: 5, 5: 3 }, lowestFret: 3 },
+                { name: '第 5 品封閉四音把位 (5-7品)', notes: { 1: 5, 2: 5, 3: 5, 4: 7 }, lowestFret: 5 },
+                { name: '第 7 品高音域延伸把位 (0-8品)', notes: { 2: 0, 3: 0, 4: 7, 5: 8 }, lowestFret: 0 }
+            ],
+            "D13": [
+                { name: '第 3 品五音爵士把位 (0-5品)', notes: { 1: 5, 2: 4, 3: 5, 4: 0, 5: 3 }, lowestFret: 0 },
+                { name: '開放通透四音把位 (0-5品)', notes: { 2: 0, 3: 5, 4: 1, 5: 2 }, lowestFret: 0 },
+                { name: '第 5 品封閉四音把位 (5-7品)', notes: { 1: 5, 2: 5, 3: 5, 4: 7 }, lowestFret: 5 },
+                { name: '第 4 品雙空弦精緻型 (0-5品)', notes: { 1: 5, 2: 4, 3: 0, 4: 0, 5: 4 }, lowestFret: 0 }
+            ],
+            "Dadd9": [
+                { name: '開放三音把位 (0-5品)', notes: { 2: 0, 3: 2, 4: 5 }, lowestFret: 0 },
+                { name: '第 2 品封閉四音把位 (2-5品)', notes: { 1: 5, 2: 2, 3: 3 }, lowestFret: 2 },
+                { name: '第 7 品雙空弦通透型 (0-9品)', notes: { 2: 0, 3: 9, 4: 7, 5: 0 }, lowestFret: 0 },
+                { name: '第 7 品封閉五音把位 (7-10品)', notes: { 0: 10, 1: 7, 2: 7, 3: 7, 4: 7 }, lowestFret: 7 }
+            ],
+            "Daug": [
+                { name: '開放四音把位 (0-3品)', notes: { 2: 0, 3: 3, 4: 3, 5: 2 }, lowestFret: 0 },
+                { name: '第 3 品四音把位 (3-5品)', notes: { 1: 5, 2: 4, 3: 3, 4: 3 }, lowestFret: 3 },
+                { name: '第 5 品爵士四音把位 (5-8品)', notes: { 1: 5, 2: 8, 3: 7, 4: 8 }, lowestFret: 5 },
+                { name: '第 7 品封閉四音把位 (7-10品)', notes: { 0: 10, 1: 9, 2: 8, 3: 7 }, lowestFret: 7 }
+            ],
+            "Ddim": [
+                { name: '開放常用四音把位 (0-3品)', notes: { 2: 0, 3: 1, 4: 3, 5: 1 }, lowestFret: 0 },
+                { name: '第 5 品四音把位 (5-7品)', notes: { 1: 5, 2: 6, 3: 7, 4: 6 }, lowestFret: 5 },
+                { name: '第 9 品高音通透把位 (0-10品)', notes: { 2: 0, 3: 10, 4: 9, 5: 10 }, lowestFret: 0 },
+                { name: '第 10 品全封閉把位 (10-12品)', notes: { 0: 10, 1: 11, 2: 12, 3: 10 }, lowestFret: 10 }
+            ],
+            "Ddim7": [
+                { name: '開放通透四音把位 (0-1品)', notes: { 2: 0, 3: 1, 4: 0, 5: 1 }, lowestFret: 0 },
+                { name: '第 3 品精緻爵士把位 (3-6品)', notes: { 1: 5, 2: 6, 3: 4, 4: 6 }, lowestFret: 3 },
+                { name: '第 3 品四音把位 (3-5品)', notes: { 1: 5, 2: 3, 3: 4, 4: 4 }, lowestFret: 3 },
+                { name: '第 7 品通透延伸把位 (0-10品)', notes: { 2: 0, 3: 10, 4: 8, 5: 7 }, lowestFret: 0 }
+            ],
             "Dm": [
                 { name: '開放第 1 把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 1 }, lowestFret: 0 },
-                { name: '第 5 品封閉 (Am型)', notes: { 1: 5, 2: 7, 3: 7, 4: 6, 5: 5 }, lowestFret: 5 },
-                { name: '第 10 品封閉 (Em型)', notes: { 0: 10, 1: 12, 2: 12, 3: 10, 4: 10, 5: 10 }, lowestFret: 10 }
+                { name: '第 5 品標準全封閉 (Am型)', notes: { 1: 5, 2: 7, 3: 7, 4: 6, 5: 5 }, lowestFret: 5 },
+                { name: '第 5 品四音把位 (1-4弦)', notes: { 2: 7, 3: 7, 4: 6, 5: 5 }, lowestFret: 5 },
+                { name: '第 10 品三音把位 (0-10品)', notes: { 2: 0, 4: 10, 5: 10 }, lowestFret: 0 }
+            ],
+            "Dm6": [
+                { name: '開放通透把位 (0-2品)', notes: { 2: 0, 3: 2, 4: 0, 5: 1 }, lowestFret: 0 },
+                { name: '開放四音把位 (0-4品)', notes: { 2: 0, 3: 4, 4: 3, 5: 1 }, lowestFret: 0 },
+                { name: '第 3 品封閉把位 (3-5品)', notes: { 1: 5, 2: 3, 3: 4, 4: 3, 5: 5 }, lowestFret: 3 },
+                { name: '第 6 品高音通透把位 (0-7品)', notes: { 2: 0, 3: 7, 4: 6, 5: 7 }, lowestFret: 0 }
             ],
             "Dm7": [
                 { name: '開放小橫按把位 (0-2品)', notes: { 2: 0, 3: 2, 4: 1, 5: 1 }, lowestFret: 0 },
-                { name: '第 5 品封閉 (Am7型)', notes: { 1: 5, 2: 7, 3: 5, 4: 6, 5: 5 }, lowestFret: 5 },
-                { name: '第 10 品封閉 (Em7型)', notes: { 0: 10, 1: 12, 2: 10, 3: 10, 4: 10, 5: 10 }, lowestFret: 10 }
+                { name: '第 5 品標準封閉把位 (Am7型)', notes: { 1: 5, 2: 7, 3: 5, 4: 6, 5: 5 }, lowestFret: 5 },
+                { name: '第 5 品四音把位 (0-6品)', notes: { 2: 0, 3: 5, 4: 6, 5: 5 }, lowestFret: 0 },
+                { name: '第 8 品高音延伸把位 (0-10品)', notes: { 2: 0, 3: 10, 4: 10, 5: 8 }, lowestFret: 0 }
             ],
-            "D": [
-                { name: '開放第 1 把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 2 }, lowestFret: 0 },
-                { name: '第 5 品封閉 (A型)', notes: { 1: 5, 2: 7, 3: 7, 4: 7, 5: 5 }, lowestFret: 5 },
-                { name: '第 10 品封閉 (E型)', notes: { 0: 10, 1: 12, 2: 12, 3: 11, 4: 10, 5: 10 }, lowestFret: 10 }
+            "Dm7(b5)": [
+                { name: '開放通透四音把位 (0-1品)', notes: { 2: 0, 3: 1, 4: 1, 5: 1 }, lowestFret: 0 },
+                { name: '第 4 品高音通透把位 (0-6品)', notes: { 2: 0, 3: 5, 4: 6, 5: 4 }, lowestFret: 0 },
+                { name: '第 5 品標準半減七 (5-6品)', notes: { 1: 5, 2: 6, 3: 5, 4: 6 }, lowestFret: 5 },
+                { name: '第 9 品高音域把位 (0-10品)', notes: { 2: 0, 3: 10, 4: 9, 5: 10 }, lowestFret: 0 }
             ],
-            "Dsus2": [
-                { name: '開放第 1 把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 0 }, lowestFret: 0 },
-                { name: '第 5 品封閉 (Asus2型)', notes: { 1: 5, 2: 7, 3: 7, 4: 5, 5: 5 }, lowestFret: 5 }
+            "Dm9": [
+                { name: '第 3 品四音爵士把位 (3-5品)', notes: { 1: 5, 2: 3, 3: 5, 4: 5 }, lowestFret: 3 },
+                { name: '第 5 品雙空弦抒情型 (0-6品)', notes: { 1: 5, 2: 0, 3: 5, 4: 6, 5: 0 }, lowestFret: 0 },
+                { name: '開放雙空弦四音把位 (0-6品)', notes: { 2: 0, 3: 5, 4: 6, 5: 0 }, lowestFret: 0 },
+                { name: '第 10 品標準全封閉 (10-12品)', notes: { 0: 10, 1: 12, 2: 10, 3: 10, 4: 10, 5: 12 }, lowestFret: 10 }
             ],
-            "Dsus4": [
-                { name: '開放第 1 把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 3 }, lowestFret: 0 },
-                { name: '第 5 品封閉 (Asus4型)', notes: { 1: 5, 2: 7, 3: 7, 4: 8, 5: 5 }, lowestFret: 5 },
-                { name: '第 10 品封閉 (Esus4型)', notes: { 0: 10, 1: 12, 2: 12, 3: 12, 4: 10, 5: 10 }, lowestFret: 10 }
+            "Dm11": [
+                { name: '開放通透四音把位 (0-1品)', notes: { 2: 0, 3: 0, 4: 1, 5: 1 }, lowestFret: 0 },
+                { name: '第 3 品小橫按五音把位 (3-5品)', notes: { 1: 5, 2: 5, 3: 5, 4: 3, 5: 3 }, lowestFret: 3 },
+                { name: '第 5 品封閉五音把位 (5-6品)', notes: { 1: 5, 2: 5, 3: 5, 4: 6, 5: 5 }, lowestFret: 5 },
+                { name: '第 3 品高音延伸把位 (0-5品)', notes: { 2: 0, 3: 5, 4: 6, 5: 3 }, lowestFret: 0 }
+            ],
+            "Dm13": [
+                { name: '第 5 品封閉五音把位 (5-7品)', notes: { 1: 5, 2: 7, 3: 5, 4: 6, 5: 7 }, lowestFret: 5 },
+                { name: '第 4 品爵士四音把位 (4-7品)', notes: { 1: 5, 2: 5, 3: 5, 4: 7 }, lowestFret: 4 },
+                { name: '第 5 品封閉延伸把位 (5-7品)', notes: { 1: 5, 2: 5, 3: 5, 4: 6, 5: 7 }, lowestFret: 5 },
+                { name: '第 8 品全封閉爵士把位 (8-10品)', notes: { 0: 10, 1: 8, 2: 9, 3: 9, 4: 8, 5: 8 }, lowestFret: 8 }
             ],
             "Dmaj7": [
                 { name: '開放第 1 把位 (0-2品)', notes: { 2: 0, 3: 2, 4: 2, 5: 2 }, lowestFret: 0 },
-                { name: '第 5 品封閉 (Amaj7型)', notes: { 1: 5, 2: 7, 3: 6, 4: 7, 5: 5 }, lowestFret: 5 },
-                { name: '第 10 品封閉 (Emaj7型)', notes: { 0: 10, 1: 12, 2: 11, 3: 11, 4: 10, 5: 10 }, lowestFret: 10 }
+                { name: '第 2 品封閉四音把位 (2-5品)', notes: { 1: 5, 2: 4, 3: 2, 4: 2, 5: 2 }, lowestFret: 2 },
+                { name: '第 5 品標準全封閉 (Amaj7型)', notes: { 1: 5, 2: 7, 3: 6, 4: 7, 5: 5 }, lowestFret: 5 },
+                { name: '第 5 品高音通透把位 (0-7品)', notes: { 2: 0, 3: 6, 4: 7, 5: 5 }, lowestFret: 0 }
+            ],
+            "Dmaj9": [
+                { name: '第 4 品四音爵士把位 (4-6品)', notes: { 1: 5, 2: 4, 3: 6, 4: 5 }, lowestFret: 4 },
+                { name: '第 2 品小橫按四音把位 (2-5品)', notes: { 1: 5, 2: 2, 3: 2, 4: 2 }, lowestFret: 2 },
+                { name: '第 4 品精緻四音把位 (4-6品)', notes: { 1: 4, 2: 5, 3: 6, 4: 5 }, lowestFret: 4 },
+                { name: '第 7 品通透延伸把位 (0-9品)', notes: { 2: 0, 3: 9, 4: 7, 5: 9 }, lowestFret: 0 }
+            ],
+            "Dmaj11": [
+                { name: '第 2 品雙空弦通透型 (0-4品)', notes: { 1: 5, 2: 4, 3: 0, 4: 2, 5: 0 }, lowestFret: 0 },
+                { name: '開放通透四音把位 (0-2品)', notes: { 2: 0, 3: 0, 4: 2, 5: 2 }, lowestFret: 0 },
+                { name: '開放全六弦通透把位 (0-5品)', notes: { 0: 0, 1: 5, 2: 4, 3: 2, 4: 2, 5: 3 }, lowestFret: 0 },
+                { name: '第 4 品通透延伸把位 (0-6品)', notes: { 1: 5, 2: 4, 3: 0, 4: 6, 5: 0 }, lowestFret: 0 }
             ],
             "Dmaj13": [
-                { name: '第 5 品把位 (高音13度B)', notes: { 1: 5, 2: 5, 3: 6, 4: 5, 5: 7 }, lowestFret: 5 },
-                { name: '第 2 品精簡爵士把位', notes: { 1: 5, 2: 4, 3: 4, 5: 2 }, lowestFret: 2 },
-                { name: '第 4 品延伸把位', notes: { 1: 5, 2: 4, 3: 6, 5: 7 }, lowestFret: 4 },
-                { name: '第 9 品完整爵士把位 (6弦根音)', notes: { 0: 10, 1: 9, 2: 11, 3: 11, 4: 11, 5: 11 }, lowestFret: 9 }
+                { name: '第 5 品封閉高音把位 (5-7品)', notes: { 1: 5, 2: 5, 3: 6, 4: 5, 5: 7 }, lowestFret: 5 },
+                { name: '第 2 品精簡爵士把位 (2-5品)', notes: { 1: 5, 2: 4, 3: 4, 4: 2, 5: 2 }, lowestFret: 2 },
+                { name: '第 4 品延伸四音把位 (4-7品)', notes: { 1: 5, 2: 4, 3: 6, 4: 7 }, lowestFret: 4 },
+                { name: '第 9 品完整爵士把位 (9-11品)', notes: { 0: 10, 1: 9, 2: 11, 3: 11, 4: 11, 5: 11 }, lowestFret: 9 }
             ],
-            "D#": [
+            "Dsus2": [
+                { name: '開放第 1 把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 0 }, lowestFret: 0 },
+                { name: '第 2 品精簡三音把位 (2-5品)', notes: { 1: 5, 3: 2, 4: 2 }, lowestFret: 2 },
+                { name: '第 5 品封閉把位 (Asus2型)', notes: { 1: 5, 2: 7, 3: 7, 4: 5, 5: 5 }, lowestFret: 5 },
+                { name: '第 7 品通透延伸把位 (0-7品)', notes: { 2: 0, 3: 7, 4: 0, 5: 0 }, lowestFret: 0 }
+            ],
+            "Dsus4": [
+                { name: '開放第 1 把位 (0-3品)', notes: { 2: 0, 3: 2, 4: 3, 5: 3 }, lowestFret: 0 },
+                { name: '第 3 品通透四音把位 (0-5品)', notes: { 2: 0, 3: 0, 4: 3, 5: 5 }, lowestFret: 0 },
+                { name: '第 5 品三音把位 (0-7品)', notes: { 1: 5, 2: 7, 4: 0 }, lowestFret: 0 },
+                { name: '第 5 品封閉把位 (Asus4型)', notes: { 1: 5, 2: 7, 3: 7, 4: 8 }, lowestFret: 5 }
+            ],
+
+            "Eb": [
                 { name: '第 1 品四音把位 (1-4弦)', notes: { 2: 1, 3: 3, 4: 4, 5: 3 }, lowestFret: 1 },
                 { name: '第 3 品封閉把位 (3-6品)', notes: { 1: 6, 2: 5, 3: 3, 4: 4, 5: 3 }, lowestFret: 3 },
                 { name: '第 6 品標準全封閉 (A型)', notes: { 1: 6, 2: 8, 3: 8, 4: 8 }, lowestFret: 6 },
                 { name: '第 11 品標準全封閉 (E型)', notes: { 0: 11, 1: 13, 2: 13, 3: 12, 4: 11, 5: 11 }, lowestFret: 11 }
             ],
-            "D#5": [
+            "Eb5": [
                 { name: '第 1 品三音強力把位 (1-4弦)', notes: { 2: 1, 3: 3, 4: 4 }, lowestFret: 1 },
                 { name: '第 4 品精簡把位 (4-6品)', notes: { 1: 6, 4: 4, 5: 6 }, lowestFret: 4 },
                 { name: '第 6 品強力五度 (6-8品)', notes: { 1: 6, 2: 8, 3: 8 }, lowestFret: 6 },
                 { name: '第 8 品高音雙音把位 (8-11品)', notes: { 3: 8, 5: 11 }, lowestFret: 8 }
             ],
-            "D#6": [
+            "Eb6": [
                 { name: '第 1 品四音把位 (1-4弦)', notes: { 2: 1, 3: 3, 4: 1, 5: 3 }, lowestFret: 1 },
                 { name: '第 6 品封閉把位 (A6型)', notes: { 1: 6, 2: 8, 3: 8, 4: 8, 5: 8 }, lowestFret: 6 },
                 { name: '第 8 品高音把位 (8-11品)', notes: { 0: 11, 1: 10, 3: 8, 4: 8, 5: 8 }, lowestFret: 8 },
                 { name: '第 10 品四音爵士把位 (10-12品)', notes: { 0: 11, 2: 10, 3: 12, 4: 11 }, lowestFret: 10 }
             ],
-            "D#6/9": [
+            "Eb6/9": [
                 { name: '開放通透把位 (含3弦空弦G)', notes: { 2: 1, 3: 0, 4: 1, 5: 1 }, lowestFret: 0 },
                 { name: '第 5 品四音爵士把位 (5-6品)', notes: { 1: 6, 2: 5, 3: 5, 4: 6 }, lowestFret: 5 },
                 { name: '第 8 品全橫按把位 (8-11品)', notes: { 0: 11, 1: 8, 2: 8, 3: 8, 4: 8, 5: 8 }, lowestFret: 8 },
                 { name: '第 8 品精緻爵士把位 (8-11品)', notes: { 0: 11, 1: 8, 2: 8, 3: 10, 4: 8, 5: 8 }, lowestFret: 8 }
             ],
-            "D#7": [
+            "Eb7": [
                 { name: '第 1 品四音把位 (1-4弦)', notes: { 2: 1, 3: 3, 4: 2, 5: 3 }, lowestFret: 1 },
                 { name: '第 6 品封閉把位 (A7型)', notes: { 1: 6, 2: 8, 3: 6, 4: 8, 5: 6 }, lowestFret: 6 },
                 { name: '第 4 品四音爵士把位 (4-6品)', notes: { 1: 6, 2: 5, 3: 6, 4: 4 }, lowestFret: 4 },
                 { name: '第 11 品標準全封閉 (E7型)', notes: { 0: 11, 1: 13, 2: 11, 3: 12, 4: 11, 5: 11 }, lowestFret: 11 }
             ],
-            "D#7(#9)": [
+            "Eb7(#9)": [
                 { name: '開放通透把位 (含3弦空弦G)', notes: { 2: 1, 3: 0, 4: 2, 5: 2 }, lowestFret: 0 },
                 { name: '第 5 品經典亨德里克斯把位 (Hendrix)', notes: { 1: 6, 2: 5, 3: 6, 4: 7 }, lowestFret: 5 },
                 { name: '第 11 品三音爵士把位 (11-12品)', notes: { 1: 11, 3: 12, 4: 12 }, lowestFret: 11 },
                 { name: '第 11 品全封閉把位 (11-14品)', notes: { 0: 11, 1: 13, 2: 11, 3: 12, 4: 11, 5: 14 }, lowestFret: 11 }
             ],
-            "D#7(b5)": [
+            "Eb7(b5)": [
                 { name: '第 1 品四音把位 (1-4弦)', notes: { 2: 1, 3: 2, 4: 2, 5: 3 }, lowestFret: 1 },
                 { name: '第 6 品封閉把位 (6-8品)', notes: { 1: 6, 2: 7, 3: 6, 4: 8, 5: 8 }, lowestFret: 6 },
                 { name: '第 5 品四音爵士把位 (5-8品)', notes: { 1: 6, 2: 7, 3: 5, 5: 8 }, lowestFret: 5 },
                 { name: '第 6 品小橫按把位 (6-8品)', notes: { 1: 6, 2: 7, 3: 6, 4: 8 }, lowestFret: 6 }
             ],
-            "D#7(b9)": [
+            "Eb7(b9)": [
                 { name: '開放通透把位 (含1、3弦空弦)', notes: { 2: 1, 3: 0, 4: 2, 5: 0 }, lowestFret: 0 },
                 { name: '第 5 品都會四音把位 (5-6品)', notes: { 1: 6, 2: 5, 3: 6, 4: 5 }, lowestFret: 5 },
                 { name: '第 6 品爵士四音把位 (6-8品)', notes: { 1: 6, 2: 7, 3: 8, 4: 7 }, lowestFret: 6 },
                 { name: '第 11 品全封閉把位 (11-13品)', notes: { 0: 11, 1: 13, 2: 11, 3: 12, 4: 11, 5: 12 }, lowestFret: 11 }
             ],
-            "D#7sus4": [
+            "Eb7sus4": [
                 { name: '第 1 品四音把位 (1-4弦)', notes: { 2: 1, 3: 3, 4: 2, 5: 4 }, lowestFret: 1 },
                 { name: '第 1 品通透四音把位 (1-4弦)', notes: { 2: 1, 3: 1, 4: 2, 5: 4 }, lowestFret: 1 },
                 { name: '第 6 品封閉高音把位 (6-9品)', notes: { 1: 6, 2: 6, 3: 6, 4: 6, 5: 9 }, lowestFret: 6 },
                 { name: '第 11 品標準全封閉 (E7sus4型)', notes: { 0: 11, 1: 13, 2: 11, 3: 13, 4: 11, 5: 11 }, lowestFret: 11 }
             ],
-            "D#9": [
+            "Eb9": [
                 { name: '開放抒情四音把位 (0-2品)', notes: { 2: 1, 3: 0, 4: 2, 5: 1 }, lowestFret: 0 },
                 { name: '第 5 品放克全橫按把位 (5-6品)', notes: { 1: 6, 2: 5, 3: 6, 4: 6, 5: 6 }, lowestFret: 5 },
                 { name: '第 5 品放克四音把位 (5-6品)', notes: { 1: 6, 2: 5, 3: 6, 4: 6 }, lowestFret: 5 },
                 { name: '第 10 品封閉四音把位 (10-12品)', notes: { 0: 11, 1: 10, 2: 10, 3: 12 }, lowestFret: 10 }
             ],
-            "D#11": [
+            "Eb11": [
                 { name: '第 1 品四音把位 (1-3品)', notes: { 2: 1, 3: 1, 4: 2, 5: 3 }, lowestFret: 1 },
                 { name: '第 3 品封閉四音把位 (3-6品)', notes: { 1: 6, 2: 3, 3: 3, 4: 4 }, lowestFret: 3 },
                 { name: '第 6 品四音橫按把位 (6-8品)', notes: { 1: 6, 2: 6, 3: 6, 4: 8 }, lowestFret: 6 },
                 { name: '第 4 品通透延伸把位 (4-7品)', notes: { 1: 6, 2: 5, 3: 7, 5: 4 }, lowestFret: 4 }
             ],
-            "D#13": [
+            "Eb13": [
                 { name: '第 3 品封閉五音把位 (3-6品)', notes: { 1: 6, 2: 4, 3: 5, 4: 3, 5: 3 }, lowestFret: 3 },
                 { name: '第 3 品精巧四音把位 (3-6品)', notes: { 1: 6, 2: 4, 3: 5, 4: 3 }, lowestFret: 3 },
                 { name: '第 3 品爵士四音把位 (3-6品)', notes: { 1: 6, 2: 6, 3: 5, 5: 3 }, lowestFret: 3 },
                 { name: '第 8 品高音域延伸把位 (8-11品)', notes: { 0: 11, 1: 11, 2: 9, 3: 10, 5: 8 }, lowestFret: 8 }
             ],
-            "D#add9": [
+            "Ebadd9": [
                 { name: '開放通透四音把位 (0-3品)', notes: { 2: 1, 3: 0, 4: 3, 5: 1 }, lowestFret: 0 },
                 { name: '第 3 品封閉四音把位 (3-6品)', notes: { 1: 6, 2: 5, 3: 3, 4: 4 }, lowestFret: 3 },
                 { name: '第 7 品全封閉把位 (7-11品)', notes: { 0: 11, 1: 7, 2: 9, 3: 8, 4: 11 }, lowestFret: 7 },
                 { name: '第 11 品高把位封閉 (11-13品)', notes: { 0: 11, 1: 11, 2: 11, 3: 12, 5: 13 }, lowestFret: 11 }
             ],
-            "D#aug": [
+            "Ebaug": [
                 { name: '開放雙空弦把位 (0-4品)', notes: { 2: 1, 3: 0, 4: 0, 5: 4 }, lowestFret: 0 },
                 { name: '開放單空弦四音把位 (0-4品)', notes: { 2: 1, 3: 4, 4: 0, 5: 3 }, lowestFret: 0 },
                 { name: '第 4 品四音把位 (4-6品)', notes: { 1: 6, 2: 5, 3: 4, 4: 4 }, lowestFret: 4 },
                 { name: '第 4 品高音通透把位 (4-6品)', notes: { 1: 6, 2: 5, 3: 4, 5: 6 }, lowestFret: 4 }
             ],
-            "D#dim": [
+            "Ebdim": [
                 { name: '第 1 品四音把位 (1-4品)', notes: { 2: 1, 3: 2, 4: 4, 5: 2 }, lowestFret: 1 },
                 { name: '第 1 品三音把位 (1-4品)', notes: { 2: 1, 3: 2, 4: 4 }, lowestFret: 1 },
                 { name: '第 6 品常用四音把位 (6-8品)', notes: { 1: 6, 2: 7, 3: 8, 4: 7 }, lowestFret: 6 },
                 { name: '第 11 品全封閉把位 (11-14品)', notes: { 0: 11, 1: 13, 2: 14, 3: 11 }, lowestFret: 11 }
             ],
-            "D#dim7": [
+            "Ebdim7": [
                 { name: '第 1 品精緻四音把位 (1-2品)', notes: { 2: 1, 3: 2, 4: 1, 5: 2 }, lowestFret: 1 },
                 { name: '第 5 品精緻爵士把位 (5-7品)', notes: { 1: 6, 2: 7, 3: 5, 4: 7 }, lowestFret: 5 },
                 { name: '第 4 品五音小橫按把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 5, 4: 4, 5: 5 }, lowestFret: 4 },
                 { name: '第 10 品全封閉把位 (10-11品)', notes: { 0: 11, 2: 10, 3: 11, 4: 10 }, lowestFret: 10 }
             ],
-            "D#m": [
+            "Ebm": [
                 { name: '第 1 品四音把位 (1-4品)', notes: { 2: 1, 3: 3, 4: 4, 5: 2 }, lowestFret: 1 },
                 { name: '第 6 品標準全封閉 (Am型)', notes: { 1: 6, 2: 8, 3: 8, 4: 7, 5: 6 }, lowestFret: 6 },
                 { name: '第 6 品四音把位 (1-4弦)', notes: { 2: 8, 3: 8, 4: 7, 5: 6 }, lowestFret: 6 },
                 { name: '第 11 品標準全封閉 (Em型)', notes: { 0: 11, 1: 13, 2: 13, 3: 11, 4: 11, 5: 11 }, lowestFret: 11 }
             ],
-            "D#m6": [
+            "Ebm6": [
                 { name: '第 1 品四音把位 (1-3品)', notes: { 2: 1, 3: 3, 4: 1, 5: 2 }, lowestFret: 1 },
                 { name: '第 4 品精緻四音把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 5, 4: 4 }, lowestFret: 4 },
                 { name: '第 5 品延伸五音把位 (5-8品)', notes: { 1: 6, 2: 8, 3: 5, 4: 7, 5: 8 }, lowestFret: 5 },
                 { name: '第 4 品封閉五音把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 5, 4: 4, 5: 6 }, lowestFret: 4 }
             ],
-            "D#m7": [
+            "Ebm7": [
                 { name: '第 1 品四音把位 (1-3品)', notes: { 2: 1, 3: 3, 4: 2, 5: 2 }, lowestFret: 1 },
                 { name: '第 6 品標準封閉把位 (Am7型)', notes: { 1: 6, 2: 8, 3: 6, 4: 7, 5: 6 }, lowestFret: 6 },
                 { name: '第 4 品封閉高音把位 (4-7品)', notes: { 1: 6, 2: 4, 3: 6, 4: 4, 5: 7 }, lowestFret: 4 },
                 { name: '第 4 品小橫按四音把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 6, 4: 6 }, lowestFret: 4 }
             ],
-            "D#m7(b5)": [
+            "Ebm7(b5)": [
                 { name: '第 1 品橫按四音把位 (1-2品)', notes: { 2: 1, 3: 2, 4: 2, 5: 2 }, lowestFret: 1 },
                 { name: '第 4 品封閉通透把位 (4-7品)', notes: { 1: 6, 2: 7, 3: 6, 5: 5 }, lowestFret: 4 },
                 { name: '第 6 品標準半減七 (6-7品)', notes: { 1: 6, 2: 7, 3: 6, 4: 7 }, lowestFret: 6 },
                 { name: '第 6 品延伸四音把位 (6-9品)', notes: { 1: 6, 2: 7, 4: 7, 5: 9 }, lowestFret: 6 }
             ],
-            "D#m9": [
+            "Ebm9": [
                 { name: '第 1 品抒情四音把位 (1-2品)', notes: { 2: 1, 3: 1, 4: 2, 5: 1 }, lowestFret: 1 },
                 { name: '第 6 品全橫按把位 (6-8品)', notes: { 1: 6, 2: 6, 3: 8, 4: 6, 5: 6 }, lowestFret: 6 },
                 { name: '第 4 品封閉爵士把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 6, 4: 6, 5: 6 }, lowestFret: 4 },
                 { name: '第 11 品標準全封閉 (11-13品)', notes: { 0: 11, 1: 11, 2: 13, 3: 11, 4: 11, 5: 13 }, lowestFret: 11 }
             ],
-            "D#m13": [
+            "Ebm13": [
                 { name: '第 6 品封閉五音把位 (6-8品)', notes: { 1: 6, 2: 8, 3: 6, 4: 7, 5: 8 }, lowestFret: 6 },
                 { name: '第 5 品通透爵士把位 (5-8品)', notes: { 1: 6, 2: 8, 3: 6, 5: 8 }, lowestFret: 5 },
                 { name: '第 9 品全橫按延伸把位 (9-11品)', notes: { 0: 11, 1: 9, 2: 10, 3: 10, 4: 9, 5: 9 }, lowestFret: 9 },
                 { name: '第 11 品全封閉把位 (11-13品)', notes: { 0: 11, 1: 11, 2: 11, 3: 13, 4: 13, 5: 11 }, lowestFret: 11 }
             ],
-            "D#m11": [
+            "Ebm11": [
                 { name: '第 1 品四音小橫按把位 (1-2品)', notes: { 2: 1, 3: 1, 4: 1, 5: 2 }, lowestFret: 1 },
                 { name: '第 4 品小橫按把位 (4-6品)', notes: { 1: 6, 2: 6, 3: 6, 4: 6, 5: 6 }, lowestFret: 4 },
                 { name: '第 6 品小橫按五音把位 (6-7品)', notes: { 1: 6, 2: 6, 3: 6, 4: 7, 5: 6 }, lowestFret: 6 },
                 { name: '第 4 品封閉五音把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 6, 4: 6, 5: 4 }, lowestFret: 4 }
             ],
-            "D#maj7": [
+            "Ebmaj7": [
                 { name: '開放通透把位 (含3弦空弦G)', notes: { 2: 1, 3: 0, 4: 3, 5: 3 }, lowestFret: 0 },
                 { name: '第 6 品標準全封閉 (Amaj7型)', notes: { 1: 6, 2: 8, 3: 7, 4: 8, 5: 6 }, lowestFret: 6 },
                 { name: '第 3 品封閉五音把位 (3-6品)', notes: { 1: 6, 2: 5, 3: 3, 4: 4, 5: 4 }, lowestFret: 3 },
                 { name: '第 11 品標準全封閉 (Emaj7型)', notes: { 0: 11, 1: 13, 2: 12, 3: 12, 4: 11, 5: 11 }, lowestFret: 11 }
             ],
-            "D#maj9": [
+            "Ebmaj9": [
                 { name: '開放通透四音把位 (0-3品)', notes: { 2: 1, 3: 0, 4: 3, 5: 1 }, lowestFret: 0 },
                 { name: '第 3 品封閉把位 (3-6品)', notes: { 1: 6, 2: 5, 3: 3, 4: 4, 5: 4 }, lowestFret: 3 },
                 { name: '第 10 品爵士四音把位 (10-12品)', notes: { 0: 11, 1: 10, 2: 12, 3: 10, 4: 11 }, lowestFret: 10 },
                 { name: '第 10 品全橫按把位 (10-12品)', notes: { 0: 11, 1: 10, 2: 12, 3: 10, 4: 11, 5: 10 }, lowestFret: 10 }
             ],
-            "D#maj11": [
+            "Ebmaj11": [
                 { name: '第 1 品三音把位 (1-3品)', notes: { 2: 1, 3: 1, 4: 3 }, lowestFret: 1 },
                 { name: '開放通透四音把位 (0-4品)', notes: { 2: 1, 3: 0, 4: 3, 5: 4 }, lowestFret: 0 },
                 { name: '第 3 品小橫按把位 (3-6品)', notes: { 1: 6, 2: 4, 3: 4, 4: 4, 5: 4 }, lowestFret: 3 },
                 { name: '第 3 品四音把位 (3-6品)', notes: { 1: 6, 2: 5, 3: 4, 5: 4 }, lowestFret: 3 }
             ],
-            "D#maj13": [
+            "Ebmaj13": [
                 { name: '第 3 品封閉五音把位 (3-6品)', notes: { 1: 6, 2: 5, 3: 3, 4: 3, 5: 3 }, lowestFret: 3 },
                 { name: '第 4 品封閉四音把位 (4-6品)', notes: { 1: 6, 2: 4, 3: 5, 5: 6 }, lowestFret: 4 },
                 { name: '第 6 品封閉五音把位 (6-8品)', notes: { 1: 6, 2: 8, 3: 7, 4: 8, 5: 8 }, lowestFret: 6 },
                 { name: '第 10 品全封閉把位 (10-11品)', notes: { 0: 11, 1: 10, 2: 10, 3: 11, 4: 10, 5: 10 }, lowestFret: 10 }
             ],
-            "D#sus2": [
+            "Ebsus2": [
                 { name: '第 1 品四音小橫按把位 (1-4品)', notes: { 2: 1, 3: 1, 4: 3, 5: 4 }, lowestFret: 1 },
                 { name: '第 6 品封閉把位 (Asus2型)', notes: { 1: 6, 2: 8, 3: 8, 4: 6, 5: 6 }, lowestFret: 6 },
                 { name: '第 3 品封閉四音把位 (3-6品)', notes: { 1: 6, 2: 3, 3: 3, 4: 4 }, lowestFret: 3 },
                 { name: '第 6 品低音延伸把位 (6-8品)', notes: { 0: 6, 2: 7, 4: 8 }, lowestFret: 6 }
             ],
-            "D#sus4": [
+            "Ebsus4": [
                 { name: '第 1 品三音強力把位 (1-4弦)', notes: { 2: 1, 3: 3, 4: 4 }, lowestFret: 1 },
                 { name: '第 3 品封閉四音把位 (3-6品)', notes: { 1: 6, 2: 6, 3: 3, 4: 4 }, lowestFret: 3 },
                 { name: '第 6 品封閉把位 (Asus4型)', notes: { 1: 6, 2: 8, 3: 8, 4: 9 }, lowestFret: 6 },
                 { name: '第 11 品低音大橫按把位 (11-13品)', notes: { 0: 11, 1: 13, 2: 13, 3: 13 }, lowestFret: 11 }
+            ],
+            "E": [
+                { name: '開放標準經典把位 (0-2品)', notes: { 0: 0, 1: 2, 2: 2, 3: 1, 4: 0, 5: 0 }, lowestFret: 0 },
+                { name: '第 4 品高音通透把位 (含6弦空弦E)', notes: { 0: 0, 3: 4, 4: 5, 5: 4 }, lowestFret: 0 },
+                { name: '第 7 品標準全封閉 (A型)', notes: { 0: 0, 1: 7, 2: 9, 3: 9, 4: 9 }, lowestFret: 0 },
+                { name: '第 9 品高音橫按把位 (含6弦空弦E)', notes: { 0: 0, 2: 9, 3: 9, 4: 9 }, lowestFret: 0 }
+            ],
+            "E5": [
+                { name: '開放雙音強力把位 (0-2品)', notes: { 0: 0, 1: 2, 2: 2 }, lowestFret: 0 },
+                { name: '第 2 品三音強力把位 (2-5品)', notes: { 2: 2, 3: 4, 4: 5 }, lowestFret: 2 },
+                { name: '第 5 品高音雙音把位 (5-7品)', notes: { 4: 5, 5: 7 }, lowestFret: 5 },
+                { name: '第 7 品低音強力把位 (含6弦空弦E)', notes: { 0: 0, 1: 7, 2: 9, 3: 9 }, lowestFret: 0 }
             ],
 
             "E6": [
@@ -4119,7 +4272,7 @@
             const rootsContainer = document.getElementById('modal-roots-container');
             const qualitiesContainer = document.getElementById('modal-qualities-container');
 
-            // Render Roots
+            // Render Roots (使用習慣用語：Eb, Ab, Bb)
             rootsContainer.innerHTML = '';
             noteNames.forEach(root => {
                 const btn = document.createElement('button');
