@@ -1831,14 +1831,14 @@
           priority: 3,
         },
         {
-          pattern: [0, 4, 7, 11, 2, 9],
+          pattern: [0, 4, 7, 11, 2, 5, 9],
           suffix: "maj13",
           type: "maj13",
           fullName: "大十三和弦 (Major 13th)",
           priority: 3,
         },
         {
-          pattern: [0, 3, 7, 10, 2, 9],
+          pattern: [0, 3, 7, 10, 2, 5, 9],
           suffix: "m13",
           type: "m13",
           fullName: "小十三和弦 (Minor 13th)",
@@ -9446,7 +9446,7 @@
           activePCs.add(midi % 12);
         });
 
-        // 若為標準延伸或掛留和弦，將其理論組成音補齊至鋼琴鍵盤顯示集合
+        // 嚴格依照和弦理論組成音更新鋼琴鍵盤，避免指板按法中的雜音混入
         const tensionPCs = new Set();
         if (rootPC !== null && currentSymbol) {
           const s = currentSymbol.toLowerCase();
@@ -9455,6 +9455,7 @@
             (d) => d.suffix === currentSuffix,
           );
           if (matchedDef && matchedDef.pattern) {
+            activePCs.clear();
             matchedDef.pattern.forEach((interval) => {
               activePCs.add((rootPC + interval) % 12);
             });
@@ -9522,7 +9523,7 @@
                   isRoot = relativeOffset === 0;
                 }
               } else {
-                // 延伸和弦：9/11/13 音允許出現在較高八度
+                // 延伸和弦：9/11/13 音允許出現在較高八度；1組八度模式下亦能完整包容展現
                 if (tensionPCs.has(pc)) {
                   if (targetOctaves > 1) {
                     if (relativeOffset >= 12 && relativeOffset < 24) {
@@ -9530,7 +9531,7 @@
                       isTension = true;
                     }
                   } else {
-                    if (relativeOffset > 0 && relativeOffset <= 14) {
+                    if (relativeOffset > 0 && relativeOffset <= 24) {
                       shouldHighlight = true;
                       isTension = true;
                     }
@@ -9568,6 +9569,10 @@
               if (label) label.style.color = "#0284c7";
             } else {
               dot.classList.add("active-tone");
+              const interval = (pc - rootPC + 12) % 12;
+              if (interval === 11 || interval === 10) {
+                dot.textContent = "7";
+              }
               if (label) label.style.color = "#15803d";
             }
           } else {
