@@ -156,6 +156,27 @@
             opacity: 0;
         }
 
+        /* 不發音悶弦的紅色 X 標記樣式 */
+        .mute-cross {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ef4444;
+            font-size: 15px;
+            font-weight: 900;
+            line-height: 1;
+            pointer-events: none;
+            z-index: 25;
+            text-shadow: 0 0 6px rgba(239, 68, 68, 0.8), 0 1px 2px rgba(0, 0, 0, 0.9);
+            user-select: none;
+            display: none;
+        }
+
+        .hitbox.muted .mute-cross {
+            display: block;
+        }
+
         /* Anchor chord active dots (預設：找不到根音時使用) */
         .hitbox.selected .selected-dot {
             transform: translate(-50%, -50%) scale(1);
@@ -1225,6 +1246,7 @@
             const noteName = noteNames[midi % 12];
 
             hitbox.innerHTML = `
+                <div class="mute-cross">✕</div>
                 <div class="hover-dot">${noteName}</div>
                 <div class="selected-dot">${noteName}</div>
             `;
@@ -1321,6 +1343,7 @@
             let rootPC = parsed ? parsed.rootPC : (anchorPrimaryMatch ? anchorPrimaryMatch.rootPC : null);
             
             const activeStrings = Object.keys(selectedNotes).map(Number);
+            const hasAnySound = activeStrings.length > 0;
             const activePCs = new Set();
             activeStrings.forEach(str => {
                 const fret = selectedNotes[str];
@@ -1354,8 +1377,8 @@
                 const str = parseInt(box.dataset.string);
                 const fret = parseInt(box.dataset.fret);
                 
-                // 清除所有舊狀態
-                box.classList.remove('selected', 'preview-selected', 'role-root', 'role-tone', 'role-tension');
+                // 清除所有舊狀態 (包含 muted 狀態)
+                box.classList.remove('selected', 'preview-selected', 'role-root', 'role-tone', 'role-tension', 'muted');
 
                 if (selectedNotes[str] === fret) {
                     const midi = stringBaseMidi[str] + fret;
@@ -1382,6 +1405,9 @@
                             box.classList.add('role-tone');
                         }
                     }
+                } else if (fret === 0 && hasAnySound && selectedNotes[str] === undefined) {
+                    // 若當前和弦該弦完全未彈奏 (不發音)，在第 0 品 (Nut 處) 標示紅色 ✕
+                    box.classList.add('muted');
                 }
             });
 
