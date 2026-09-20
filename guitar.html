@@ -621,6 +621,32 @@
                     </div>
                 </div>
 
+                <!-- NEW INSERTION: Complete Diatonic Chords Section (自然大調順階和弦盤) -->
+                <div class="bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 rounded-2xl p-4 sm:p-5 border border-emerald-500/30 shadow-xl">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🪜</span>
+                            <h4 class="text-xs sm:text-sm font-black text-emerald-300 uppercase tracking-wider">
+                                <span id="diatonic-root-title">C</span> 自然大調順階和弦盤 (Diatonic Chords)
+                            </h4>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px] font-bold">
+                                <button onclick="setDiatonicMode('triad')" id="diatonic-mode-triad" class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold transition">三和弦</button>
+                                <button onclick="setDiatonicMode('seventh')" id="diatonic-mode-seventh" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition">七和弦</button>
+                            </div>
+                            <span class="text-[11px] text-slate-400 hidden sm:inline">點擊即時發聲並於指板預覽</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                        以 <strong id="diatonic-root-desc" class="text-emerald-300 font-mono">C</strong> 為主音（Ⅰ級）所建構的完整 7 個自然順階音級和弦，也是所有流行音樂與編曲進行的最基本骨架：
+                    </p>
+
+                    <div id="diatonic-chords-container" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
                 <!-- 1. Deep In-depth Tonal Roles & Harmonic Functions (調性與功能角色定位深度教學) -->
                 <div class="bg-slate-900/90 rounded-2xl p-4 sm:p-6 border border-slate-800 shadow-md">
                     <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
@@ -1257,6 +1283,7 @@
             if (s.includes('sus2')) degreeStepMap[2] = 1;
             if (s.includes('sus4') || s.includes('11')) degreeStepMap[5] = 3;
             if (s.includes('7(#9)')) degreeStepMap[3] = 1;
+            if (s.includes('dim7')) degreeStepMap[9] = 6;
 
             activePCs.forEach(pc => {
                 if (pc === rootPC) return;
@@ -1980,6 +2007,110 @@
             return clean;
         }
 
+        let currentDiatonicMode = 'triad'; // 'triad' 或 'seventh'
+
+        // 嚴謹自然大調音階調性音名映射
+        const diatonicScalesData = {
+            'C':  { names: ['C', 'D', 'E', 'F', 'G', 'A', 'B'] },
+            'C#': { names: ['C#', 'D#', 'E#', 'F#', 'G#', 'A#', 'B#'] },
+            'Db': { names: ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'] },
+            'D':  { names: ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'] },
+            'D#': { names: ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'] },
+            'Eb': { names: ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'] },
+            'E':  { names: ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'] },
+            'F':  { names: ['F', 'G', 'A', 'Bb', 'C', 'D', 'E'] },
+            'F#': { names: ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'] },
+            'Gb': { names: ['Gb', 'Ab', 'Bb', 'Cb', 'Db', 'Eb', 'F'] },
+            'G':  { names: ['G', 'A', 'B', 'C', 'D', 'E', 'F#'] },
+            'G#': { names: ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'] },
+            'Ab': { names: ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'] },
+            'A':  { names: ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'] },
+            'A#': { names: ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'] },
+            'Bb': { names: ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'] },
+            'B':  { names: ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#'] }
+        };
+
+        window.setDiatonicMode = function(mode) {
+            currentDiatonicMode = mode;
+            const triadBtn = document.getElementById('diatonic-mode-triad');
+            const seventhBtn = document.getElementById('diatonic-mode-seventh');
+            if (mode === 'triad') {
+                triadBtn.className = 'px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold transition';
+                seventhBtn.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-white transition';
+            } else {
+                seventhBtn.className = 'px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold transition';
+                triadBtn.className = 'px-2 py-0.5 rounded text-slate-400 hover:text-white transition';
+            }
+            // 永遠使用核心定錨和弦 (anchorChordSymbol) 作為基底
+            const parsed = parseChordSymbol(anchorChordSymbol);
+            renderDiatonicChords(parsed ? parsed.root : 'C');
+        };
+
+        function renderDiatonicChords(rootName) {
+            const cleanRoot = rootName.replace(/[\u00a0\s]+/g, '').trim();
+            const rootScale = diatonicScalesData[cleanRoot] || diatonicScalesData['C'];
+            const notes = rootScale.names;
+
+            const titleEl = document.getElementById('diatonic-root-title');
+            const descEl = document.getElementById('diatonic-root-desc');
+            const container = document.getElementById('diatonic-chords-container');
+
+            if (titleEl) titleEl.textContent = cleanRoot;
+            if (descEl) descEl.textContent = cleanRoot;
+            if (!container) return;
+            container.innerHTML = '';
+
+            const degreesTriad = [
+                { roman: 'Ⅰ', suffix: '', type: '主和弦 (Tonic)', color: 'text-amber-300', bg: 'border-amber-500/40 bg-amber-500/10' },
+                { roman: 'ⅱ', suffix: 'm', type: '上主和弦 (Supertonic)', color: 'text-sky-300', bg: 'border-slate-700 bg-slate-800/80' },
+                { roman: 'ⅲ', suffix: 'm', type: '中音和弦 (Mediant)', color: 'text-sky-300', bg: 'border-slate-700 bg-slate-800/80' },
+                { roman: 'Ⅳ', suffix: '', type: '下屬和弦 (Subdominant)', color: 'text-emerald-300', bg: 'border-emerald-500/40 bg-emerald-500/10' },
+                { roman: 'Ⅴ', suffix: '', type: '屬和弦 (Dominant)', color: 'text-rose-300', bg: 'border-rose-500/40 bg-rose-500/10' },
+                { roman: 'ⅵ', suffix: 'm', type: '下中音和弦 (Submediant)', color: 'text-sky-300', bg: 'border-slate-700 bg-slate-800/80' },
+                { roman: 'ⅶ°', suffix: 'dim', type: '導音減和弦 (Leading-tone)', color: 'text-purple-300', bg: 'border-purple-500/40 bg-purple-500/10' }
+            ];
+
+            const degreesSeventh = [
+                { roman: 'Ⅰmaj7', suffix: 'maj7', type: '大七和弦 (Maj7)', color: 'text-amber-300', bg: 'border-amber-500/40 bg-amber-500/10' },
+                { roman: 'ⅱm7', suffix: 'm7', type: '小七和弦 (m7)', color: 'text-sky-300', bg: 'border-slate-700 bg-slate-800/80' },
+                { roman: 'ⅲm7', suffix: 'm7', type: '小七和弦 (m7)', color: 'text-sky-300', bg: 'border-slate-700 bg-slate-800/80' },
+                { roman: 'Ⅳmaj7', suffix: 'maj7', type: '大七和弦 (Maj7)', color: 'text-emerald-300', bg: 'border-emerald-500/40 bg-emerald-500/10' },
+                { roman: 'Ⅴ7', suffix: '7', type: '屬七和弦 (Dom7)', color: 'text-rose-300', bg: 'border-rose-500/40 bg-rose-500/10' },
+                { roman: 'ⅵm7', suffix: 'm7', type: '小七和弦 (m7)', color: 'text-sky-300', bg: 'border-slate-700 bg-slate-800/80' },
+                { roman: 'ⅶø7', suffix: 'm7(b5)', type: '半減七和弦 (m7b5)', color: 'text-purple-300', bg: 'border-purple-500/40 bg-purple-500/10' }
+            ];
+
+            const activeList = currentDiatonicMode === 'seventh' ? degreesSeventh : degreesTriad;
+
+            activeList.forEach((item, idx) => {
+                const chordSymbol = `${notes[idx]}${item.suffix}`;
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-xl border ${item.bg} flex flex-col justify-between items-center text-center shadow transition hover:scale-[1.03] cursor-pointer`;
+                card.onpointerdown = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    auditionRelatedChord(chordSymbol);
+                };
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between w-full mb-1">
+                        <span class="text-[11px] font-mono font-black text-slate-400">${item.roman}</span>
+                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-900/90 text-slate-300">音級 ${idx + 1}</span>
+                    </div>
+                    <div class="text-base sm:text-lg font-black ${item.color} font-mono my-0.5">
+                        ${chordSymbol}
+                    </div>
+                    <div class="text-[10px] text-slate-400 truncate w-full mt-1" title="${item.type}">
+                        ${item.type}
+                    </div>
+                    <button type="button" class="mt-2 w-full py-1 text-[10px] font-bold rounded bg-slate-900 hover:bg-emerald-600 text-slate-200 hover:text-white transition flex items-center justify-center gap-1">
+                        <span>▶</span> 試聽
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         function recalculateAndLockAnchor() {
             const chordDisplay = document.getElementById('chord-display');
             const guideContainer = document.getElementById('arranger-guide-container');
@@ -2077,6 +2208,7 @@
                 
                 // Build All Theoretical Labs locked to Anchor
                 renderRelatedChordsFamily(anchorPrimaryMatch.root);
+                renderDiatonicChords(anchorPrimaryMatch.root);
                 buildDeepTonalRoles(anchorPrimaryMatch);
                 buildPredecessorsAndSuccessors(anchorPrimaryMatch);
                 buildExpandedIconicProgressions(anchorPrimaryMatch);
@@ -2113,7 +2245,7 @@
             playStrum();
         };
 
-       // Auditions a related chord while keeping anchor analysis locked
+        // Auditions a related chord while keeping anchor analysis locked
         window.auditionRelatedChord = function(chordName, voicingIndex = 0) {
             const voicings = getVoicingsForChord(chordName);
             if (!voicings || voicings.length === 0) {
@@ -2132,7 +2264,7 @@
             playStrum();
 
             // 2. 拔除 offsetHeight 毒瘤，使用 requestAnimationFrame 延後 UI 渲染
-            // 確保主執行緒有空檔處理發聲與計算，避免強制重排死鎖
+            // 確保主執行緒有空檔處理發聲與計算，避免強制重排死鎖；此處不重繪順階和弦盤，維持核心定錨不變
             requestAnimationFrame(() => {
                 updateFretboardVisuals();
                 renderVoicingSelector(chordName, voicings, currentVoicingIndex, true);
@@ -2272,15 +2404,27 @@
         function buildDeepTonalRoles(chord) {
             const root = chord.root;
             const rootPC = chord.rootPC;
-            const isMinor = chord.type.includes('minor') || chord.type.includes('m');
+            const isMinor = chord.suffix === 'm' || chord.suffix.startsWith('m') || chord.type === 'minor';
             const grid = document.getElementById('tonal-roles-grid');
+
+            // 嚴謹音樂理論調名與主音對照表 (0: C, 1: C#/Db, 2: D, 3: Eb, 4: E, 5: F, 6: F#/Gb, 7: G, 8: Ab, 9: A, 10: Bb, 11: B)
+            const standardMajorKeyNames = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
+            const standardMinorKeyNames = ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'B♭', 'B'];
 
             let roles = [];
 
             if (!isMinor) {
+                // 當前大和弦為：
+                // 1) Ⅰ 級時：主調即為自身 (如 C -> C 大調，主和弦為 C)
                 const keyI = root;
-                const keyIV = getTransposedNote(rootPC, 7);
-                const keyV = getTransposedNote(rootPC, 5);
+
+                // 2) Ⅳ 級時：該調的主音在下方純四度/上方純五度 (PC - 5 + 12) % 12 (如 C 是 G 大調的 Ⅳ 級，主和弦是 G)
+                const tonic4PC = (rootPC + 7) % 12;
+                const keyWhereIsIV = standardMajorKeyNames[tonic4PC];
+
+                // 3) Ⅴ 級時：該調的主音在下方純五度 (PC - 7 + 12) % 12 (如 C 是 F 大調的 Ⅴ 級，主和弦是 F)
+                const tonic5PC = (rootPC + 5) % 12;
+                const keyWhereIsV = standardMajorKeyNames[tonic5PC];
 
                 roles.push({
                     key: `${keyI} 大調`,
@@ -2288,36 +2432,44 @@
                     color: 'border-amber-500/40 bg-amber-500/5',
                     headerColor: 'text-amber-300',
                     vibe: '極致穩定、安全感、大本營',
-                    explanation: `這是調性的「重力中心」。旋律或歌曲無論遊走多遠，一旦落回 ${auditionChordPill(keyI)}，聽眾大腦便會釋放所有期待與緊張感。`,
+                    explanation: `這是 ${keyI} 大調的「重力中心」。旋律或歌曲無論遊走多遠，一旦落回 ${auditionChordPill(keyI)}，聽眾大腦便會釋放所有期待與緊張感。`,
                     application: `<strong>實戰用法：</strong>作為主歌起點、副歌高潮落點與終止句。配樂常用以表達「回家」、「釋懷」、「黎明到來」的平靜感。`,
                     songExample: `《Let It Be》、《Someone Like You》核心主音。`
                 });
 
                 roles.push({
-                    key: `${keyIV} 大調`,
+                    key: `${keyWhereIsIV} 大調`,
                     degree: 'Ⅳ 級 (Subdominant 下屬和弦)',
                     color: 'border-sky-500/40 bg-sky-500/5',
                     headerColor: 'text-sky-300',
                     vibe: '開闊、抒情、離家遠行、充滿希望',
-                    explanation: `下屬功能沒有屬和弦尖銳的三全音衝突，卻打破了主和弦的平靜。它就像推開家門看見遼闊的世界，為調性注入活力。`,
-                    application: `<strong>實戰用法：</strong>日系流行（J-Pop）最愛將副歌第一句直接下在 Ⅳ 級（如 ${auditionChordPill(root)} 推進至 ${auditionChordPill(keyIV)}），瞬間拉大空間感。`,
+                    explanation: `在 ${keyWhereIsIV} 大調中，${auditionChordPill(root)} 扮演下屬和弦。下屬功能沒有屬和弦尖銳的三全音衝突，卻打破了主和弦的平靜，為調性注入明朗的推進力。`,
+                    application: `<strong>實戰用法：</strong>日系流行（J-Pop）最愛將副歌第一句直接下在 Ⅳ 級（從主和弦 ${auditionChordPill(keyWhereIsIV)} 推進至 Ⅳ 級 ${auditionChordPill(root)}），瞬間拉大空間感。`,
                     songExample: `日系動漫神曲副歌起手式、各類抒情民謠副歌展開。`
                 });
 
                 roles.push({
-                    key: `${keyV} 大調`,
+                    key: `${keyWhereIsV} 大調`,
                     degree: 'Ⅴ 級 (Dominant 屬和弦)',
                     color: 'border-rose-500/40 bg-rose-500/5',
                     headerColor: 'text-rose-300',
                     vibe: '劇烈張力、懸念、極度渴望回歸',
-                    explanation: `屬和弦含有大調音階中的第 7 級導音（Leading Tone），距離主調主音僅差半音，產生不可抗拒的磁吸力，迫不及待解決回 ${auditionChordPill(keyV)}。`,
-                    application: `<strong>實戰用法：</strong>置於段落銜接處（半終止）吊足聽眾胃口，或在副歌最後一句作為強烈推進至下一段的彈簧。`,
+                    explanation: `在 ${keyWhereIsV} 大調中，${auditionChordPill(root)} 是能量最強的屬和弦，含有音階中的導音，距離主和弦僅差半音，產生不可抗拒的磁吸力，強烈渴望解決回主和弦 ${auditionChordPill(keyWhereIsV)}。`,
+                    application: `<strong>實戰用法：</strong>置於段落銜接處（半終止）吊足聽眾胃口，或在副歌最後一句作為強烈推進回主和弦 ${auditionChordPill(keyWhereIsV)} 的彈簧。`,
                     songExample: `所有經典古典交響樂終止式、古典搖滾終止句型。`
                 });
             } else {
+                // 當前小和弦為：
+                // 1) ⅰ 級時：主調即為自身小調 (如 Am -> A 小調)
                 const keyIm = root;
-                const keyVI = getTransposedNote(rootPC, 3);
-                const keyII = getTransposedNote(rootPC, 10);
+
+                // 2) ⅵ 級時：該調的主音在上方小三度 (PC + 3) % 12 (如 Am 是 C 大調的 ⅵ 級)
+                const tonic6PC = (rootPC + 3) % 12;
+                const keyWhereIsVI = standardMajorKeyNames[tonic6PC];
+
+                // 3) ⅱ 級時：該調的主音在下方大二度 (PC - 2 + 12) % 12 (如 Am 是 G 大調的 ⅱ 級)
+                const tonic2PC = (rootPC + 10) % 12;
+                const keyWhereIsII = standardMajorKeyNames[tonic2PC];
 
                 roles.push({
                     key: `${keyIm} 小調`,
@@ -2325,30 +2477,30 @@
                     color: 'border-purple-500/40 bg-purple-500/5',
                     headerColor: 'text-purple-300',
                     vibe: '孤寂、內省、神秘、宿命感',
-                    explanation: `小三度的陰翳感賦予它深刻的敘事性。在小調音樂中，${auditionChordPill(keyIm + 'm')} 是憂傷情緒的收容所與大本營。`,
+                    explanation: `小三度的陰翳感賦予它深刻的敘事性。在 ${keyIm} 小調中，${auditionChordPill(root)} 是憂傷情緒的收容所與大本營。`,
                     application: `<strong>實戰用法：</strong>適合描繪失落、冒險、陰雨綿綿的場景。常與大調主和弦交替，營造悲喜交織的層次感。`,
                     songExample: `《加州旅館 (Hotel California)》、《迷宮》小調主音。`
                 });
 
                 roles.push({
-                    key: `${keyVI} 大調`,
+                    key: `${keyWhereIsVI} 大調`,
                     degree: 'ⅵ 級 (Submediant 關係小調)',
                     color: 'border-indigo-500/40 bg-indigo-500/5',
                     headerColor: 'text-indigo-300',
                     vibe: '陽光轉折、回憶、微酸惆悵',
-                    explanation: `與大調主和弦 ${auditionChordPill(keyVI)} 共享了 2 個共同音，兩者轉移極其自然。常在明亮的大調進行中突然切入，製造心頭一酸的情感起伏。`,
+                    explanation: `在 ${keyWhereIsVI} 大調中，${auditionChordPill(root)} 作為 ⅵ 級和弦，與主和弦 ${auditionChordPill(keyWhereIsVI)} 共享了 2 個共同音，兩者轉移極其自然。常在明亮的大調進行中突然切入，製造心頭一酸的情感起伏。`,
                     application: `<strong>實戰用法：</strong>流行歌 1-5-6-4 中的「6 級阻礙感」，打破直白大調的呆板，增添故事性。`,
                     songExample: `周杰倫《晴天》、泰勒斯《Love Story》敘事句。`
                 });
 
                 roles.push({
-                    key: `${keyII} 大調`,
+                    key: `${keyWhereIsII} 大調`,
                     degree: 'ⅱ 級 (Supertonic 下屬功能)',
                     color: 'border-teal-500/40 bg-teal-500/5',
                     headerColor: 'text-teal-300',
                     vibe: '都會、優雅、R&B / 爵士起跑點',
-                    explanation: `小調 Ⅱ 級和弦通常是通往屬和弦的橋樑（如 Ⅱ-Ⅴ-Ⅰ）。在流行歌中能沖淡嚴肅氣氛，帶來慵懶、高級的爵士都市感。`,
-                    application: `<strong>實戰用法：</strong>常搭配 7 音或 9 音（如 ${auditionChordPill(root + 'm7')}），平滑推動聲部走向 Ⅴ7。`,
+                    explanation: `在 ${keyWhereIsII} 大調中，${auditionChordPill(root)} 扮演 ⅱ 級，是通往屬和弦的橋樑（如 Ⅱ-Ⅴ-Ⅰ）。在流行歌中能沖淡嚴肅氣氛，帶來慵懶、高級的爵士都市感。`,
+                    application: `<strong>實戰用法：</strong>常搭配 7 音或 9 音，平滑推動聲部走向 ${keyWhereIsII} 大調的 Ⅴ7。`,
                     songExample: `City Pop 經典歌曲、Neo-Soul 漫步句型。`
                 });
             }
