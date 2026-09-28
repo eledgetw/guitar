@@ -797,8 +797,10 @@
 
             <button
               id="clear-btn"
-              class="px-2.5 py-1.5 bg-slate-800 hover:bg-rose-600 active:scale-95 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition border border-slate-700/70"
+              title="按鍵盤 Esc 隨時清空指板與鋼琴"
+              class="px-2.5 py-1.5 bg-slate-800 hover:bg-rose-600 active:scale-95 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition border border-slate-700/70 flex items-center gap-1.5"
             >
+              <kbd class="px-1 py-0.2 bg-slate-900 rounded text-[10px] text-slate-400 font-mono border border-slate-700">Esc</kbd>
               清除
             </button>
           </div>
@@ -11378,17 +11380,75 @@
           .map(Number)
           .sort((a, b) => a - b);
 
-        if (activeStrings.length < 2) {
+        if (activeStrings.length === 0) {
           chordDisplay.innerHTML = `
                     <div class="col-span-full py-8 text-center border-2 border-dashed border-slate-800 rounded-xl bg-slate-900/30">
-                        <p class="text-slate-400 text-sm font-medium">請在指板上點選至少 2 個音以確立核心和弦。<br>
-                        <span class="text-xs text-slate-500 mt-1 block">提示：您可以點擊上方預設或「重設核心和弦」直接體驗！</span></p>
+                        <p class="text-slate-400 text-sm font-medium">請在指板上點選音符以確立核心和弦。<br>
+                        <span class="text-xs text-slate-500 mt-1 block">提示：點擊指板上的任意單音，將自動列出以該音為根音的候選和弦！</span></p>
                     </div>`;
           guideContainer.classList.add("hidden");
           document
             .getElementById("voicing-selector-panel")
             .classList.add("hidden");
           anchorStatusPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>尚未定錨`;
+          return;
+        }
+
+        if (activeStrings.length === 1) {
+          const str = activeStrings[0];
+          const fret = anchorNotes[str];
+          const midi = stringBaseMidi[str] + fret;
+          const rootName = noteNames[midi % 12];
+          const rootPC = midi % 12;
+
+          anchorStatusPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>已選根音: ${rootName} (請選擇和弦)`;
+
+          const candidateSuffixes = [
+            { suffix: "", fullName: "大三和弦 (Major Triad)", tag: "大和弦" },
+            { suffix: "m", fullName: "小三和弦 (Minor Triad)", tag: "小和弦" },
+            { suffix: "7", fullName: "屬七和弦 (Dominant 7th)", tag: "七和弦" },
+            { suffix: "maj7", fullName: "大七和弦 (Major 7th)", tag: "大七" },
+            { suffix: "m7", fullName: "小七和弦 (Minor 7th)", tag: "小七" },
+            { suffix: "sus4", fullName: "掛留四和弦 (Sus4)", tag: "掛留" },
+            { suffix: "sus2", fullName: "掛留二和弦 (Sus2)", tag: "掛留" },
+            { suffix: "add9", fullName: "加九和弦 (Add9)", tag: "常用" },
+            { suffix: "5", fullName: "強力五度和弦 (Power Chord)", tag: "搖滾" },
+            { suffix: "dim", fullName: "減三和弦 (Diminished)", tag: "減和弦" },
+            { suffix: "aug", fullName: "增三和弦 (Augmented)", tag: "增和弦" },
+            { suffix: "m7(b5)", fullName: "半減七和弦 (Half-Diminished)", tag: "爵士" }
+          ];
+
+          chordDisplay.innerHTML = `
+            <div class="col-span-full mb-1 flex items-center justify-between text-xs text-slate-400 px-1">
+              <span>以 <strong class="text-amber-400 font-mono text-sm">${rootName}</strong> 為根音的候選和弦 (點擊直接在指板套用)：</span>
+              <span class="text-[11px] text-amber-500/90 font-medium">共 ${candidateSuffixes.length} 種常見和弦</span>
+            </div>
+          ` + candidateSuffixes.map((c) => {
+            const chordSymbol = `${rootName}${c.suffix}`;
+            return `
+              <div onclick="setAnchorAndPlay('${chordSymbol}')"
+                   title="點擊直接定錨為 ${chordSymbol} 並在指板上排列把位"
+                   class="chord-action-btn w-full text-left relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/80 hover:bg-slate-800/90 hover:border-amber-400/80 p-3.5 flex flex-col justify-between transition shadow-md group cursor-pointer">
+                  <span class="absolute top-2 right-2 text-[9px] text-slate-400 group-hover:text-amber-300 px-1.5 py-0.5 rounded bg-slate-800 group-hover:bg-amber-500/20 transition">${c.tag}</span>
+                  <div>
+                      <div class="text-2xl font-black tracking-tight text-slate-100 group-hover:text-amber-400 mb-1 transition">
+                          ${chordSymbol}
+                      </div>
+                      <div class="text-xs font-semibold text-slate-400 group-hover:text-slate-200 transition">
+                          ${rootName} ${c.fullName}
+                      </div>
+                  </div>
+                  <div class="mt-2.5 pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center w-full">
+                      <span>根音：<strong class="text-amber-300 font-mono">${rootName}</strong></span>
+                      <span class="text-amber-400 text-[10px] font-bold">👆 點擊套用</span>
+                  </div>
+              </div>
+            `;
+          }).join("");
+
+          guideContainer.classList.add("hidden");
+          const voicingPanel = document.getElementById("voicing-selector-panel");
+          if (voicingPanel) voicingPanel.classList.add("hidden");
           return;
         }
 
@@ -11584,6 +11644,34 @@
           renderVoicingSelector(anchorChordSymbol, voicings, 0, false);
         }
       };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const clearBtn = document.getElementById("clear-btn");
+        function triggerClearAction() {
+          selectedNotes = {};
+          anchorNotes = {};
+          anchorChordSymbol = "";
+          anchorPrimaryMatch = null;
+          isPreviewingRelated = false;
+          previewChordSymbol = "";
+          const voicingPanel = document.getElementById("voicing-selector-panel");
+          if (voicingPanel) voicingPanel.classList.add("hidden");
+          const guideContainer = document.getElementById("arranger-guide-container");
+          if (guideContainer) guideContainer.classList.add("hidden");
+          updateFretboardVisuals();
+          recalculateAndLockAnchor();
+        }
+
+        if (clearBtn) {
+          clearBtn.addEventListener("click", triggerClearAction);
+        }
+
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" || e.key === "Esc") {
+            triggerClearAction();
+          }
+        });
+      });
 
       function renderVoicingSelector(
         chordName,
